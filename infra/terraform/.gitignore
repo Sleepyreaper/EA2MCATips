@@ -1,0 +1,15 @@
+# Terraform state & local files — never commit (state can contain IDs/metadata)
+*.tfstate
+*.tfstate.*
+.terraform/
+.terraform.lock.hcl
+crash.log
+crash.*.log
+
+# Real variable files — keep only the *.example
+*.tfvars
+*.auto.tfvars
+!*.tfvars.example
+
+# Plan output
+*.tfplan

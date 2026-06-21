@@ -1,0 +1,339 @@
+{
+ "metadata": {
+  "title": "EA to MCA Migration Dashboard Sample Data",
+  "version": "1.1.0",
+  "last_updated_utc": "2026-06-21T17:00:00Z",
+  "purpose": "Demo-safe dashboard sample data for CSA review before real tenant wiring.",
+  "truthfulness_note": "This sample distinguishes documented facts from partially documented, inferred, and pending-validation guidance."
+ },
+ "rbac_tasks": [
+  {
+   "task_id": "view_billing_profile",
+   "task_label": "View billing profile",
+   "recommended_role": "Billing profile reader",
+   "recommendation_status": "documented",
+   "recommended_scope": "billing_profile",
+   "also_supported_by": [
+    "Billing profile contributor",
+    "Billing profile owner",
+    "Billing account reader",
+    "Billing account contributor",
+    "Billing account owner"
+   ],
+   "least_privilege_reason": "Billing profile viewing is anchored to the billing profile scope; reader is the narrowest profile-level read role described in the MCA billing roles guidance.",
+   "evidence_status": "documented",
+   "source_ref_key": "docs.rbac_roles_01",
+   "docs_link_key": "billing-roles",
+   "uncertainty": ""
+  },
+  {
+   "task_id": "view_download_invoice",
+   "task_label": "View or download invoice",
+   "recommended_role": "Invoice manager",
+   "recommendation_status": "pending_validation",
+   "recommended_scope": "billing_profile",
+   "also_supported_by": [
+    "Billing profile owner",
+    "Billing account owner"
+   ],
+   "least_privilege_reason": "Invoice actions are tied to billing profile invoice context, and Learn documents invoice-oriented permissions there; exact portal and API behavior still needs tenant confirmation.",
+   "evidence_status": "partially_documented",
+   "source_ref_key": "docs.invoice_roles_01",
+   "docs_link_key": "billing-roles",
+   "uncertainty": "Confirm exact invoice view/download behavior for non-owner billing roles in the customer tenant and chosen access path."
+  },
+  {
+   "task_id": "view_cost_reports",
+   "task_label": "View cost reports or cost analysis",
+   "recommended_role": "Billing profile reader",
+   "recommendation_status": "pending_validation",
+   "recommended_scope": "billing_profile",
+   "also_supported_by": [
+    "Billing profile contributor",
+    "Billing profile owner",
+    "Billing account reader",
+    "Billing account contributor",
+    "Billing account owner"
+   ],
+   "least_privilege_reason": "Reader-level scope aligns with billing visibility expectations, but specific reporting surfaces such as Power BI may require broader permission than a pure read assumption.",
+   "evidence_status": "partially_documented",
+   "source_ref_key": "docs.cost_reporting_01",
+   "docs_link_key": "cost-management-api",
+   "uncertainty": "Validate the exact role needed for each reporting surface, especially Power BI connector access in the target tenant."
+  },
+  {
+   "task_id": "manage_cost_reports",
+   "task_label": "Manage cost reporting configuration",
+   "recommended_role": "Billing profile contributor",
+   "recommendation_status": "inferred",
+   "recommended_scope": "billing_profile",
+   "also_supported_by": [
+    "Billing profile owner",
+    "Billing account contributor",
+    "Billing account owner"
+   ],
+   "least_privilege_reason": "Configuration-oriented actions usually imply contributor-level rights, but the exact management boundary varies by reporting feature and should be validated before treating this as final.",
+   "evidence_status": "inferred",
+   "source_ref_key": "docs.cost_reporting_02",
+   "docs_link_key": "cost-management-api",
+   "uncertainty": "Confirm whether the intended reporting task is portal-only, API-based, or connector-based before locking the minimum role."
+  },
+  {
+   "task_id": "create_subscription",
+   "task_label": "Create subscription under MCA billing scope",
+   "recommended_role": "Azure subscription creator",
+   "recommendation_status": "documented",
+   "recommended_scope": "invoice_section",
+   "also_supported_by": [
+    "Invoice section owner",
+    "Billing account owner"
+   ],
+   "least_privilege_reason": "Learn identifies Azure subscription creator at invoice-section scope as the least-privilege delegation for subscription creation under MCA.",
+   "evidence_status": "documented",
+   "source_ref_key": "docs.subscription_creator_01",
+   "docs_link_key": "enterprise-operations",
+   "uncertainty": ""
+  },
+  {
+   "task_id": "view_costs_invoice_section",
+   "task_label": "View costs for one invoice section",
+   "recommended_role": "Invoice section reader",
+   "recommendation_status": "documented",
+   "recommended_scope": "invoice_section",
+   "also_supported_by": [
+    "Billing profile reader",
+    "Billing account reader"
+   ],
+   "least_privilege_reason": "Read-only at the smallest billing scope; use when cost visibility is limited to one department/project section.",
+   "evidence_status": "documented",
+   "source_ref_key": "docs.rbac_roles_02",
+   "docs_link_key": "billing-roles",
+   "uncertainty": ""
+  },
+  {
+   "task_id": "view_all_billing_account",
+   "task_label": "View all billing data for the whole MCA account",
+   "recommended_role": "Billing account reader",
+   "recommendation_status": "documented",
+   "recommended_scope": "billing_account",
+   "also_supported_by": [
+    "Billing account contributor",
+    "Billing account owner"
+   ],
+   "least_privilege_reason": "Read-only at billing account scope; broad because billing-account permissions inherit to all children and cannot be removed lower.",
+   "evidence_status": "documented",
+   "source_ref_key": "docs.rbac_roles_03",
+   "docs_link_key": "billing-roles",
+   "uncertainty": ""
+  },
+  {
+   "task_id": "manage_invoice_section",
+   "task_label": "Manage invoice-section organization",
+   "recommended_role": "Invoice section contributor",
+   "recommendation_status": "documented",
+   "recommended_scope": "invoice_section",
+   "also_supported_by": [
+    "Invoice section owner",
+    "Billing profile contributor"
+   ],
+   "least_privilege_reason": "Contributor manages everything except permissions at the invoice section scope.",
+   "evidence_status": "documented",
+   "source_ref_key": "docs.rbac_roles_04",
+   "docs_link_key": "billing-roles",
+   "uncertainty": ""
+  },
+  {
+   "task_id": "create_sub_billing_profile",
+   "task_label": "Create subscription anywhere under a billing profile",
+   "recommended_role": "Billing profile contributor",
+   "recommendation_status": "documented",
+   "recommended_scope": "billing_profile",
+   "also_supported_by": [
+    "Billing profile owner",
+    "Billing account contributor",
+    "Billing account owner"
+   ],
+   "least_privilege_reason": "Broader than invoice-section creator, but the narrowest role that allows creation across all sections of a billing profile.",
+   "evidence_status": "documented",
+   "source_ref_key": "docs.subscription_creator_02",
+   "docs_link_key": "subscription-create",
+   "uncertainty": ""
+  },
+  {
+   "task_id": "powerbi_connect",
+   "task_label": "Connect Power BI direct connector to MCA billing account/profile",
+   "recommended_role": "Contributor or greater",
+   "recommendation_status": "pending_validation",
+   "recommended_scope": "billing_account_or_profile",
+   "also_supported_by": [
+    "Billing profile contributor",
+    "Billing account contributor"
+   ],
+   "least_privilege_reason": "Current Power BI Learn doc requires Contributor or greater for MCA \u2014 stricter than many teams expect; validate in tenant.",
+   "evidence_status": "pending_validation",
+   "source_ref_key": "docs.powerbi_01",
+   "docs_link_key": "powerbi-connector",
+   "uncertainty": "Power BI connector permission is stricter than a reader role; confirm in the customer tenant."
+  }
+ ],
+ "api_mapping": [
+  {
+   "ea_concept": "EA enrollment scope",
+   "mca_concept": "Billing account, billing profile, and invoice section scopes",
+   "scope_change": "Enrollment-based identifiers no longer map directly; automation must target MCA billing scopes.",
+   "breaking_change": "Existing scripts that assume EA enrollment APIs or enrollment-level scope IDs will fail or produce different scope semantics.",
+   "migration_action": "Inventory all EA-scoped API calls and replace them with MCA billing-scope-aware Billing and Cost Management API calls.",
+   "evidence_status": "documented",
+   "source_ref_key": "docs.api_migration_01",
+   "docs_link_key": "migrate-cost-management-api",
+   "uncertainty": ""
+  },
+  {
+   "ea_concept": "EA cost-management API automation",
+   "mca_concept": "ARM-based Billing and Cost Management API usage",
+   "scope_change": "Requests must be rebased to billingAccount, billingProfile, or invoiceSection where supported.",
+   "breaking_change": "Hardcoded path templates and scope parsing logic from EA automation will not transfer cleanly.",
+   "migration_action": "Refactor API clients to separate authentication from scope construction and make scope values variable-driven.",
+   "evidence_status": "documented",
+   "source_ref_key": "docs.api_migration_02",
+   "docs_link_key": "migrate-cost-management-api",
+   "uncertainty": ""
+  },
+  {
+   "ea_concept": "EA dashboard and reporting expectations",
+   "mca_concept": "MCA hierarchy in Cost Management and Power BI",
+   "scope_change": "Dashboard consumers must understand billing profile and invoice section segmentation instead of EA department and account structures.",
+   "breaking_change": "Teams may misread invoice totals or cost rollups if they expect EA-era structure and scope behavior.",
+   "migration_action": "Update dashboards, filters, and operating runbooks to explain the MCA hierarchy and invoice rollup model.",
+   "evidence_status": "partially_documented",
+   "source_ref_key": "docs.reporting_shift_01",
+   "docs_link_key": "powerbi-connector",
+   "uncertainty": "Validate exact role and field availability in the intended reporting surface before declaring parity with EA dashboards."
+  },
+  {
+   "ea_concept": "EA department",
+   "mca_concept": "MCA invoice section",
+   "scope_change": "Department-based cost grouping becomes invoice-section grouping on the billing profile invoice.",
+   "breaking_change": "Reports/automation keyed to EA department IDs must be re-keyed to invoice section names.",
+   "migration_action": "Map each EA department to an invoice section and update cost allocation logic.",
+   "evidence_status": "documented",
+   "source_ref_key": "docs.api_migration_03",
+   "docs_link_key": "enterprise-operations",
+   "uncertainty": ""
+  },
+  {
+   "ea_concept": "EA account / delegated subscription creation",
+   "mca_concept": "Azure subscription creator on invoice section",
+   "scope_change": "Delegated subscription creation moves from EA account owner to the Azure subscription creator billing role on an invoice section.",
+   "breaking_change": "Principals relying on EA account-owner semantics or Azure RBAC alone cannot create MCA subscriptions.",
+   "migration_action": "Grant Azure subscription creator on the target invoice section to the automation principal.",
+   "evidence_status": "documented",
+   "source_ref_key": "docs.api_migration_04",
+   "docs_link_key": "subscription-create",
+   "uncertainty": ""
+  },
+  {
+   "ea_concept": "Enrollment-number-based Power BI / BI connection",
+   "mca_concept": "Power BI with billing account ID / billing profile ID",
+   "scope_change": "BI connections use MCA billing account/profile IDs and manual scope selection instead of an enrollment number.",
+   "breaking_change": "Enrollment-number BI workflows stop working; permission requirement rises to Contributor or greater.",
+   "migration_action": "Reconfigure Power BI with MCA scope IDs and validate connector permissions.",
+   "evidence_status": "partially_documented",
+   "source_ref_key": "docs.api_migration_05",
+   "docs_link_key": "powerbi-connector",
+   "uncertainty": ""
+  },
+  {
+   "ea_concept": "EA invoice retrieval model",
+   "mca_concept": "MCA billing profile invoice + Billing API invoices endpoints",
+   "scope_change": "Invoices are per billing profile and retrieved/downloaded via Billing REST API invoice endpoints.",
+   "breaking_change": "Reconciliation assuming one invoice per enrollment/department must be revisited for per-billing-profile invoices.",
+   "migration_action": "Rebuild invoice retrieval against the Billing API download endpoint, scoped to the billing profile.",
+   "evidence_status": "documented",
+   "source_ref_key": "docs.api_migration_06",
+   "docs_link_key": "invoice-download",
+   "uncertainty": ""
+  }
+ ],
+ "billing": {
+  "hierarchy_levels": [
+   {
+    "level_name": "Billing account",
+    "description": "Top billing container for the agreement and parent of billing profiles.",
+    "evidence_status": "documented",
+    "source_ref_key": "docs.billing_hierarchy_01",
+    "docs_link_key": "mca-overview"
+   },
+   {
+    "level_name": "Billing profile",
+    "description": "Invoice and payment grouping; each billing profile generates a monthly invoice.",
+    "evidence_status": "documented",
+    "source_ref_key": "docs.billing_hierarchy_02",
+    "docs_link_key": "mca-overview"
+   },
+   {
+    "level_name": "Invoice section",
+    "description": "Cost segmentation container used within a billing profile invoice, often aligned to departments or projects.",
+    "evidence_status": "documented",
+    "source_ref_key": "docs.billing_hierarchy_03",
+    "docs_link_key": "mca-overview"
+   },
+   {
+    "level_name": "Subscription",
+    "description": "Azure subscriptions are billed to an invoice section and their charges roll up into the parent billing profile invoice.",
+    "evidence_status": "documented",
+    "source_ref_key": "docs.billing_hierarchy_04",
+    "docs_link_key": "mca-overview"
+   }
+  ],
+  "invoice_flow_notes": [
+   {
+    "statement": "A monthly invoice is generated per billing profile, not per invoice section.",
+    "evidence_status": "documented",
+    "source_ref_key": "docs.invoice_flow_01",
+    "docs_link_key": "mca-overview",
+    "uncertainty": ""
+   },
+   {
+    "statement": "Invoice sections appear as organizational cost segments within the billing profile invoice rather than as independent invoices.",
+    "evidence_status": "documented",
+    "source_ref_key": "docs.invoice_flow_02",
+    "docs_link_key": "mca-overview",
+    "uncertainty": ""
+   },
+   {
+    "statement": "Portal and API invoice access should be tenant-tested because billing-role behavior can vary by action surface and operational expectation.",
+    "evidence_status": "partially_documented",
+    "source_ref_key": "docs.invoice_flow_03",
+    "docs_link_key": "billing-roles",
+    "uncertainty": "Treat invoice-access automation as pending validation until tested in the customer tenant."
+   }
+  ],
+  "billing_notes": [
+   {
+    "topic": "EA to MCA mapping",
+    "statement": "EA department concepts map most closely to MCA invoice sections for cost segmentation and operational ownership.",
+    "evidence_status": "documented",
+    "source_ref_key": "docs.enterprise_mapping_01",
+    "docs_link_key": "enterprise-operations",
+    "uncertainty": ""
+   },
+   {
+    "topic": "Invoice visibility",
+    "statement": "Invoice-focused access should be treated as a billing-profile-centered capability, with exact least-privilege validation performed in tenant.",
+    "evidence_status": "partially_documented",
+    "source_ref_key": "docs.invoice_roles_01",
+    "docs_link_key": "billing-roles",
+    "uncertainty": "Confirm exact reader versus invoice-manager behavior for the portal and API combination used by the customer."
+   },
+   {
+    "topic": "Subscription creation",
+    "statement": "Automation should accept invoice-section billing scope values as variables rather than hardcoding or inferring them.",
+    "evidence_status": "documented",
+    "source_ref_key": "docs.subscription_creator_01",
+    "docs_link_key": "subscription-alias",
+    "uncertainty": ""
+   }
+  ]
+ }
+}

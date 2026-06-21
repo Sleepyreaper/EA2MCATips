@@ -1,0 +1,64 @@
+{
+ "mode": "real_environment",
+ "timestamp_utc": "2026-06-21T00:00:00Z",
+ "input_validation": {
+ "state": "pass",
+ "detail": "Required tenant and billing inputs were supplied."
+ },
+ "terraform_validate": {
+ "state": "pass",
+ "detail": "Terraform configuration validated successfully."
+ },
+ "terraform_plan": {
+ "state": "pass",
+ "detail": "Terraform plan completed with one subscription alias create operation."
+ },
+ "authentication": {
+ "state": "pass",
+ "detail": "Authentication succeeded using sanitized operator credentials."
+ },
+ "billing_scope_resolution": {
+ "state": "pass",
+ "detail": "Billing scope resolved for the supplied invoice section."
+ },
+ "subscription_alias_submission": {
+ "state": "pass",
+ "detail": "Alias request submitted successfully."
+ },
+ "subscription_creation_result": {
+ "state": "pending",
+ "detail": "Subscription create request accepted; awaiting downstream confirmation."
+ },
+ "steps": [
+ {
+ "label": "Load CSA-provided inputs",
+ "state": "pass",
+ "detail": "Input contract satisfied."
+ },
+ {
+ "label": "Authenticate to Azure",
+ "state": "pass",
+ "detail": "Sanitized success only; no secrets displayed."
+ },
+ {
+ "label": "Resolve MCA billing scope",
+ "state": "pass",
+ "detail": "Invoice-section target accepted."
+ },
+ {
+ "label": "Validate Terraform",
+ "state": "pass",
+ "detail": "Static validation passed."
+ },
+ {
+ "label": "Apply subscription alias configuration",
+ "state": "pending",
+ "detail": "Await final subscription provisioning result."
+ }
+ ],
+ "warnings": [
+ "This is a sanitized sample of real-environment output. Do not commit live IDs or secrets.",
+ "Final least-privilege confirmation should still be recorded in the uncertainty register after tenant execution."
+ ],
+ "next_step": "Record actual tenant-verified role behavior and resolved provider path in the project documentation."
+}

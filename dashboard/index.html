@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+ <meta charset="utf-8" />
+ <meta name="viewport" content="width=device-width, initial-scale=1" />
+ <title>EA to MCA Migration Dashboard</title>
+ <meta
+ name="description"
+ content="Static CSA handoff dashboard for EA to MCA migration: RBAC matrix, API mapping, billing hierarchy, invoice flow, and subscription automation status."
+ />
+ <link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+ <a class="skip-link" href="#main-content">Skip to main content</a>
+
+ <header class="site-header">
+ <div class="site-header__content">
+ <p class="eyebrow">CSA handoff artifact</p>
+ <h1>EA to MCA Migration Dashboard</h1>
+ <p class="lede">
+ Static, demo-safe guidance for Microsoft Customer Agreement migration handoff:
+ least-privilege roles, API/scope changes, billing structure, and subscription-creation readiness.
+ </p>
+ <div id="mode-banner" class="mode-banner mode-banner--pending" role="status" aria-live="polite">
+ Loading dashboard mode…
+ </div>
+ </div>
+ </header>
+
+ <nav class="section-nav" aria-label="Dashboard sections">
+ <ul class="section-nav__list">
+ <li><a href="#view-rbac">RBAC matrix</a></li>
+ <li><a href="#view-api">EA to MCA API mapping</a></li>
+ <li><a href="#view-billing">Billing hierarchy and invoice flow</a></li>
+ <li><a href="#view-status">Subscription automation status</a></li>
+ </ul>
+ </nav>
+
+ <main id="main-content" class="main-content">
+ <section class="summary-grid" aria-label="Dashboard summary">
+ <article class="summary-card">
+ <h2 class="summary-card__title">Evidence states</h2>
+ <dl class="summary-card__list">
+ <div><dt>Documented</dt><dd id="summary-documented">0</dd></div>
+ <div><dt>Partial</dt><dd id="summary-partial">0</dd></div>
+ <div><dt>Inferred</dt><dd id="summary-inferred">0</dd></div>
+ <div><dt>Pending validation</dt><dd id="summary-pending">0</dd></div>
+ </dl>
+ </article>
+
+ <article class="summary-card">
+ <h2 class="summary-card__title">Automation readiness</h2>
+ <dl class="summary-card__list">
+ <div><dt>Mode</dt><dd id="summary-mode">Unknown</dd></div>
+ <div><dt>Input validation</dt><dd id="summary-input-validation">Unknown</dd></div>
+ <div><dt>Terraform validation</dt><dd id="summary-terraform-validate">Unknown</dd></div>
+ <div><dt>Live auth</dt><dd id="summary-live-auth">Unknown</dd></div>
+ </dl>
+ </article>
+
+ <article class="summary-card">
+ <h2 class="summary-card__title">Truthfulness contract</h2>
+ <ul class="summary-card__bullets">
+ <li>Every claim shows an evidence state and source key.</li>
+ <li>Recommended minimum role is separate from evidence state.</li>
+ <li>Pending validation remains visibly pending.</li>
+ <li>Offline mode never implies live Azure execution.</li>
+ </ul>
+ </article>
+ </section>
+
+ <section id="load-state" class="load-panel load-panel--info" aria-live="polite">
+ <h2 class="load-panel__title">Dashboard load state</h2>
+ <p id="load-state-message">Loading dashboard data…</p>
+ </section>
+
+ <section id="view-rbac" class="view-section" aria-labelledby="rbac-heading">
+ <div class="section-heading">
+ <h2 id="rbac-heading">RBAC matrix</h2>
+ <p>
+ Least-privilege task guidance for MCA billing roles. Recommendations are rendered with
+ evidence state, recommendation status, source key, and any documented uncertainty.
+ </p>
+ </div>
+
+ <div class="toolbar" role="group" aria-label="RBAC filters">
+ <label class="toolbar__field" for="rbac-scope-filter">
+ <span>Scope filter</span>
+ <select id="rbac-scope-filter" name="rbacScopeFilter">
+ <option value="all">All scopes</option>
+ </select>
+ </label>
+ </div>
+
+ <div
+ class="table-wrap"
+ tabindex="0"
+ role="region"
+ aria-label="RBAC matrix table container. Horizontal scrolling may be required on smaller screens."
+ >
+ <p class="table-hint">Tip: This table scrolls horizontally on smaller screens.</p>
+ <table class="data-table">
+ <caption class="visually-hidden">MCA least-privilege RBAC task matrix</caption>
+ <thead>
+ <tr>
+ <th scope="col">Task</th>
+ <th scope="col">Recommended minimum role</th>
+ <th scope="col">Recommendation status</th>
+ <th scope="col">Evidence</th>
+ <th scope="col">Supported by higher roles</th>
+ <th scope="col">Reason</th>
+ <th scope="col">Uncertainty</th>
+ <th scope="col">Source</th>
+ </tr>
+ </thead>
+ <tbody id="rbac-table-body"></tbody>
+ </table>
+ </div>
+ </section>
+
+ <section id="view-api" class="view-section" aria-labelledby="api-heading">
+ <div class="section-heading">
+ <h2 id="api-heading">EA to MCA API mapping</h2>
+ <p>
+ Scope and API-surface changes that commonly break EA-era billing and cost automation
+ when moving to MCA billing scopes.
+ </p>
+ </div>
+
+ <div
+ class="table-wrap"
+ tabindex="0"
+ role="region"
+ aria-label="EA to MCA API mapping table container. Horizontal scrolling may be required on smaller screens."
+ >
+ <p class="table-hint">Tip: This table scrolls horizontally on smaller screens.</p>
+ <table class="data-table">
+ <caption class="visually-hidden">EA to MCA API mapping</caption>
+ <thead>
+ <tr>
+ <th scope="col">EA concept</th>
+ <th scope="col">MCA concept</th>
+ <th scope="col">Scope change</th>
+ <th scope="col">Breaking change</th>
+ <th scope="col">Migration action</th>
+ <th scope="col">Evidence</th>
+ <th scope="col">Source</th>
+ </tr>
+ </thead>
+ <tbody id="api-table-body"></tbody>
+ </table>
+ </div>
+ </section>
+
+ <section id="view-billing" class="view-section" aria-labelledby="billing-heading">
+ <div class="section-heading">
+ <h2 id="billing-heading">Billing hierarchy and invoice flow</h2>
+ <p>
+ MCA billing structure, charge rollup behavior, and invoice-access notes with explicit
+ evidence and uncertainty states.
+ </p>
+ </div>
+
+ <div class="hierarchy-layout">
+ <article class="hierarchy-card">
+ <h3>Hierarchy</h3>
+ <ol id="billing-hierarchy-list" class="hierarchy-list"></ol>
+ </article>
+
+ <article class="hierarchy-card">
+ <h3>Invoice flow notes</h3>
+ <ul id="invoice-flow-list" class="notes-list"></ul>
+ </article>
+ </div>
+
+ <div
+ class="table-wrap"
+ tabindex="0"
+ role="region"
+ aria-label="Billing notes table container. Horizontal scrolling may be required on smaller screens."
+ >
+ <p class="table-hint">Tip: This table scrolls horizontally on smaller screens.</p>
+ <table class="data-table">
+ <caption class="visually-hidden">Billing and invoice evidence notes</caption>
+ <thead>
+ <tr>
+ <th scope="col">Topic</th>
+ <th scope="col">Statement</th>
+ <th scope="col">Evidence</th>
+ <th scope="col">Source</th>
+ <th scope="col">Uncertainty</th>
+ </tr>
+ </thead>
+ <tbody id="billing-notes-table-body"></tbody>
+ </table>
+ </div>
+ </section>
+
+ <section id="view-status" class="view-section" aria-labelledby="status-heading">
+ <div class="section-heading">
+ <h2 id="status-heading">Subscription-creation automation status</h2>
+ <p>
+ JSON-driven execution visibility. Offline demo mode is simulation-only. Real-environment mode
+ is designed for sanitized post-run output with no secrets or full live identifiers.
+ </p>
+ </div>
+
+ <div class="status-grid">
+ <article class="status-card">
+ <h3>Status overview</h3>
+ <dl class="status-list" id="status-overview"></dl>
+ </article>
+
+ <article class="status-card">
+ <h3>Execution steps</h3>
+ <ol id="status-steps" class="steps-list"></ol>
+ </article>
+
+ <article class="status-card">
+ <h3>Warnings and next steps</h3>
+ <ul id="status-warnings" class="notes-list"></ul>
+ <p id="status-next-step" class="next-step"></p>
+ </article>
+ </div>
+ </section>
+ </main>
+
+ <footer class="site-footer">
+ <p>
+ Static dashboard artifact for CSA handoff. No framework, no package manager, no secrets required for offline review.
+ </p>
+ </footer>
+
+ <script src="./app.js"></script>
+</body>
+</html>

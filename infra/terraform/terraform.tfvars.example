@@ -1,0 +1,19 @@
+# Copy to terraform.tfvars and fill in with values from YOUR MCA test environment.
+# terraform.tfvars is gitignored — never commit real billing IDs.
+# Use scripts/discover_billing_scopes.sh to discover these values.
+
+# --- Billing scope (find via: scripts/discover_billing_scopes.sh) ---
+billing_account_name = "<BILLING_ACCOUNT_NAME>" # segment after billingAccounts/
+billing_profile_name = "<BILLING_PROFILE_NAME>" # segment after billingProfiles/
+invoice_section_name = "<INVOICE_SECTION_NAME>" # segment after invoiceSections/
+
+# --- New subscription ---
+subscription_alias_name   = "ea2mca-test-sub-001"        # idempotency key (stable)
+subscription_display_name = "EA2MCA Test Subscription 01"
+workload                  = "DevTest"                    # "Production" or "DevTest"
+
+# --- Optional ---
+# tenant_id           = "00000000-0000-0000-0000-000000000000"
+# management_group_id = "/providers/Microsoft.Management/managementGroups/mg-sandbox"
+# subscription_owner_id = "<PRINCIPAL_OBJECT_ID>"
+# tags = { environment = "test", project = "ea2mca" }

@@ -1,0 +1,33 @@
+# =============================================================================
+# AzureRM ALTERNATIVE to the AzAPI alias resource in main.tf.
+#
+# This file is intentionally named ".example" so it is INERT by default.
+# To use it instead of the AzAPI path:
+#   1) Remove/disable resource "azapi_resource" "subscription_alias" in main.tf.
+#   2) Rename this file to main.azurerm.tf.
+#   3) Add the azurerm provider to versions.tf + providers.tf (see below).
+#   4) Validate against your azurerm provider version FIRST — Microsoft Learn is
+#      less explicit about the exact azurerm_subscription shape for MCA than it
+#      is about the alias/AzAPI path. See docs/uncertainty-register.md (U5).
+#
+# versions.tf addition:
+#   azurerm = { source = "hashicorp/azurerm", version = "~> 4.0" }
+#
+# providers.tf addition:
+#   provider "azurerm" {
+#     features {}
+#     subscription_id = "<any subscription you can already authenticate to>"
+#   }
+# =============================================================================
+
+# resource "azurerm_subscription" "mca" {
+#   alias             = var.subscription_alias_name
+#   subscription_name = var.subscription_display_name
+#   billing_scope_id  = local.billing_scope_id
+#   workload          = var.workload
+#   tags              = var.tags
+# }
+#
+# output "subscription_id_azurerm" {
+#   value = azurerm_subscription.mca.subscription_id
+# }

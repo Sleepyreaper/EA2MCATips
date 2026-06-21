@@ -1,0 +1,65 @@
+{
+ "mode": "offline_demo",
+ "timestamp_utc": "2026-06-21T00:00:00Z",
+ "input_validation": {
+ "state": "pass",
+ "detail": "Sample variable structures are present and formatted for offline review."
+ },
+ "terraform_validate": {
+ "state": "pass",
+ "detail": "Terraform file layout is present and ready for later validation in a real workspace."
+ },
+ "terraform_plan": {
+ "state": "not_run",
+ "detail": "Offline demo mode does not attempt a live Terraform plan."
+ },
+ "authentication": {
+ "state": "not_run",
+ "detail": "No live Azure authentication attempted in offline demo mode."
+ },
+ "billing_scope_resolution": {
+ "state": "warning",
+ "detail": "Billing scope values are placeholders only and must be supplied by the CSA later."
+ },
+ "subscription_alias_submission": {
+ "state": "not_run",
+ "detail": "No alias API request is submitted in offline demo mode."
+ },
+ "subscription_creation_result": {
+ "state": "not_run",
+ "detail": "No subscription creation occurs in offline demo mode."
+ },
+ "steps": [
+ {
+ "label": "Load offline sample inputs",
+ "state": "pass",
+ "detail": "Static sample data loaded for dashboard rendering."
+ },
+ {
+ "label": "Check required variable placeholders",
+ "state": "pass",
+ "detail": "Tenant, billing, and scope fields are represented as placeholders only."
+ },
+ {
+ "label": "Attempt live Azure authentication",
+ "state": "not_run",
+ "detail": "Intentionally skipped."
+ },
+ {
+ "label": "Resolve billing scope in tenant",
+ "state": "warning",
+ "detail": "Pending CSA-supplied billing account, billing profile, and invoice section values."
+ },
+ {
+ "label": "Submit subscription alias request",
+ "state": "not_run",
+ "detail": "Blocked until real test environment values and credentials are supplied."
+ }
+ ],
+ "warnings": [
+ "Offline demo mode is simulation-only and does not prove live tenant success.",
+ "No tenant ID, billing account, billing profile, invoice section, or credentials are validated against Azure in this mode.",
+ "Use this mode only to verify artifact wiring, UI rendering, and handoff completeness."
+ ],
+ "next_step": "Provide real MCA tenant and billing scope values, then run Terraform validation and live plan/apply from the automation scripts."
+}
