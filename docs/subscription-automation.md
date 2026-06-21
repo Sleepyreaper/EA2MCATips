@@ -53,9 +53,20 @@ cd infra/terraform
 cp terraform.tfvars.example terraform.tfvars   # fill in your IDs
 terraform init
 terraform validate          # no Azure calls
+terraform plan              # review what will be created
 terraform apply
 terraform output subscription_id
 ```
+
+Authenticate first with `az login`, or a service principal via `ARM_CLIENT_ID` /
+`ARM_CLIENT_SECRET` / `ARM_TENANT_ID` (or `ARM_USE_OIDC=true` for CI). The SP needs
+the **Azure subscription creator** billing role on the invoice section — Azure RBAC
+alone is not enough.
+
+> **Full Terraform walkthrough** — variable reference, service-principal/OIDC auth,
+> CI validate-only, the `terraform destroy` gotcha (destroying the alias does **not**
+> cancel the subscription), and troubleshooting — is in
+> [`infra/terraform/README.md`](../infra/terraform/README.md).
 
 The active resource is `azapi_resource.subscription_alias` (AzAPI). An AzureRM
 alternative (`azurerm_subscription`) is included as
