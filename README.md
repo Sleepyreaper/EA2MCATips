@@ -23,14 +23,16 @@ docs/            Microsoft Learn-grounded guides (research, RBAC matrix, API map
 dashboard/       Static HTML/CSS/JS dashboard visualizing the RBAC matrix,
                  EA→MCA API mapping, billing hierarchy, and automation status
 infra/terraform/ Parameterized Terraform to create an MCA subscription (AzAPI alias)
-scripts/         Runnable wrappers: discover billing scopes, grant least-privilege
-                 role, create a subscription, serve the dashboard
+scripts/         Runnable wrappers: discover billing scopes, assign least-privilege
+                 billing roles, create a subscription, serve the dashboard
 src/ea2mca/      Python package scaffold (for future Python tooling)
 ```
 
 ## Quickstart
 
-**Read the guide** — start at [`docs/overview.md`](docs/overview.md), then the
+**Read the guide** — start at [`docs/overview.md`](docs/overview.md). To actually
+*run* a test, follow the [**CSA setup runbook**](docs/csa-setup-runbook.md)
+(elevated setup → least-privilege test accounts → cleanup). Background is in the
 [deep dive](docs/ea-to-mca-deep-dive.md) and [RBAC matrix](docs/rbac-role-task-matrix.md).
 
 **View the dashboard** (must be served over HTTP, not `file://`):
@@ -69,7 +71,6 @@ profiles, invoices, and reports.
 - Billing-scope roles are **separate** from Azure RBAC.
 
 ## Provenance
-
 The research and dashboard design were produced by the Springfield agent team
 (Marge orchestration: Troy = research, Hank = architecture/dashboard, Snake = run
 guidance, Lisa = handoff, Bob = security). The Terraform, scripts, and docs were

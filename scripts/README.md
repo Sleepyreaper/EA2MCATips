@@ -7,7 +7,8 @@ parameterized — no billing IDs or secrets are baked in. Authenticate with
 | Script | What it does | Mutating? |
 |--------|--------------|-----------|
 | `discover_billing_scopes.sh` | List billing accounts → profiles → invoice sections to find the three names you need | No (read-only) |
-| `assign_subscription_creator_role.sh` | Grant least-privilege **Azure subscription creator** on an invoice section to a principal | Yes — `--dry-run` by default, needs `--apply` |
+| `assign_billing_role.sh` | Grant **any** MCA billing role (resolved by name) to a principal at the smallest scope — for provisioning least-privilege test accounts | Yes — `--dry-run` by default, needs `--apply` |
+| `assign_subscription_creator_role.sh` | Convenience shortcut: grant **Azure subscription creator** on an invoice section | Yes — `--dry-run` by default, needs `--apply` |
 | `create_subscription.sh` | Create a subscription under an invoice section via the alias API, then poll until done | Yes — `--dry-run` available |
 | `serve_dashboard.sh` | Serve `dashboard/` over local HTTP | No |
 

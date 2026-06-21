@@ -1,5 +1,9 @@
 # Testing Strategy
 
+> Setting up the test accounts first? Follow the [CSA setup runbook](./csa-setup-runbook.md)
+> — it walks a CSA through using elevated rights for setup and then provisioning the
+> least-privilege accounts that the checks below assume are already assigned.
+
 Use this checklist to validate the handoff safely. Start offline with documentation and static artifacts. Treat real Azure execution as a separate customer-approved activity using least privilege, sanitized evidence capture, and human review before create/write actions.
 
 ## Stage 1 — Offline and demo validation

@@ -27,3 +27,4 @@ The following Microsoft Learn sources are the allowed citation set for this docu
 | 21 | `invoice-download` | Invoices - Download Invoice - REST API | https://learn.microsoft.com/en-us/rest/api/billing/invoices/download-invoice?view=rest-billing-2020-05-01 |
 | 22 | `billing-permissions-rest` | Billing Permissions - REST API | https://learn.microsoft.com/en-us/rest/api/billing/billing-permissions?view=rest-billing-2024-04-01 |
 | 23 | `billing-role-assignments-rest` | Billing Role Assignments - REST API | https://learn.microsoft.com/en-us/rest/api/billing/billing-role-assignments?view=rest-billing-2024-04-01 |
+| 24 | `elevate-access` | Elevate access to manage all Azure subscriptions and management groups | https://learn.microsoft.com/en-us/azure/role-based-access-control/elevate-access-global-admin |
