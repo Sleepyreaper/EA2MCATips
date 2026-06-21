@@ -30,8 +30,9 @@ src/ea2mca/      Python package scaffold (for future Python tooling)
 
 ## Quickstart
 
-**Read the guide** — start at [`docs/overview.md`](docs/overview.md). To actually
-*run* a test, follow the [**CSA setup runbook**](docs/csa-setup-runbook.md)
+**Read the guide** — start at [`docs/overview.md`](docs/overview.md). Check the
+[**readiness checklist**](docs/readiness-checklist.md) for the tools/roles/inputs each
+workflow needs, then follow the [**CSA setup runbook**](docs/csa-setup-runbook.md)
 (elevated setup → least-privilege test accounts → cleanup). Background is in the
 [deep dive](docs/ea-to-mca-deep-dive.md) and [RBAC matrix](docs/rbac-role-task-matrix.md).
 

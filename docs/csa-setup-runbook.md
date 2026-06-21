@@ -40,6 +40,8 @@ billing role, or to run the billing-role steps for you.
 
 ## 1. Prerequisites
 
+> Full per-workflow tool/role/input list: [readiness-checklist.md](./readiness-checklist.md).
+
 - [ ] CSA has **Global Administrator** in the test tenant (prefer **just-in-time** via
       Privileged Identity Management, time-boxed — not standing).
 - [ ] CSA holds **billing account owner** on the MCA billing account (or has a billing

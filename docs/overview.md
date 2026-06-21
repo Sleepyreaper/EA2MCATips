@@ -9,6 +9,7 @@ Under MCA, customers should rebuild their operating model from EA enrollment, de
 | Document | Purpose |
 |---|---|
 | [CSA setup runbook](./csa-setup-runbook.md) | **Start here to *do* it.** Step-by-step: CSA uses elevated rights for setup, then provisions least-privilege accounts for the customer to test with. |
+| [Readiness checklist](./readiness-checklist.md) | Per-workflow checklist of the tools, roles, and inputs you need to run everything. |
 | [EA to MCA deep dive](./ea-to-mca-deep-dive.md) | Full Microsoft Learn-grounded narrative for hierarchy, roles, APIs, portal changes, and CSA guidance. |
 | [RBAC role-task matrix](./rbac-role-task-matrix.md) | Least-privilege role recommendations by task, persona, and evidence state. |
 | [API mapping](./api-mapping.md) | EA-era pattern to MCA/current API mapping and automation breaking changes. |

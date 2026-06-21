@@ -2,6 +2,10 @@
 
 Use this intake checklist before wiring any real test environment. Do not commit filled-in secrets, tenant-specific billing identifiers, `.tfvars`, state, or plan files to the repository.
 
+> This form captures the **customer-supplied values**. For the **tools, roles, and
+> access *you* need to run each workflow**, see the
+> [readiness checklist](./readiness-checklist.md).
+
 ## Customer and tenant
 
 - [ ] **Tenant ID:** `________________________________________`
