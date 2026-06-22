@@ -1,0 +1,78 @@
+# Automate MCA subscription creation with a service principal (OIDC, no secrets).
+#
+# Setup before first run (see docs/service-principal-automation-101.md):
+#   Repo SECRETS:   AZURE_CLIENT_ID (= SP appId), AZURE_TENANT_ID
+#   Repo VARIABLES: BILLING_ACCOUNT, BILLING_PROFILE, INVOICE_SECTION
+#   The SP needs "Azure subscription creator" on that invoice section, and a
+#   federated credential whose subject matches this repo/branch.
+#
+# Manual-only: it never runs automatically.
+name: create-mca-subscription
+
+on:
+  workflow_dispatch:
+    inputs:
+      subscription_alias_name:
+        description: Stable alias (idempotency key)
+        required: true
+      subscription_display_name:
+        description: Subscription display name
+        required: true
+      workload:
+        description: Production or DevTest
+        required: true
+        default: DevTest
+        type: choice
+        options: [DevTest, Production]
+      apply:
+        description: Set true to actually create (false = plan only)
+        required: true
+        default: "false"
+        type: choice
+        options: ["false", "true"]
+
+permissions:
+  id-token: write   # required for OIDC federated auth
+  contents: read
+
+jobs:
+  terraform:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: infra/terraform
+    env:
+      ARM_USE_OIDC: "true"
+      ARM_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
+      ARM_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
+      TF_VAR_billing_account_name: ${{ vars.BILLING_ACCOUNT }}
+      TF_VAR_billing_profile_name: ${{ vars.BILLING_PROFILE }}
+      TF_VAR_invoice_section_name: ${{ vars.INVOICE_SECTION }}
+      TF_VAR_subscription_alias_name: ${{ inputs.subscription_alias_name }}
+      TF_VAR_subscription_display_name: ${{ inputs.subscription_display_name }}
+      TF_VAR_workload: ${{ inputs.workload }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Azure login (OIDC)
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          allow-no-subscriptions: true   # SP holds only a billing role
+
+      - uses: hashicorp/setup-terraform@v3
+
+      - run: terraform init
+
+      - run: terraform validate
+
+      - run: terraform plan -out=tfplan
+
+      - name: terraform apply
+        if: ${{ inputs.apply == 'true' }}
+        run: terraform apply -auto-approve tfplan
+
+      - name: Output subscription id
+        if: ${{ inputs.apply == 'true' }}
+        run: terraform output -raw subscription_id

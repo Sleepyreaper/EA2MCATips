@@ -83,6 +83,11 @@ az ad sp create-for-rbac --name "ea2mca-sub-creator-sp" --skip-assignment
 # capture the appId and run: az ad sp show --id <appId> --query id -o tsv  (object ID)
 ```
 
+> **Automating subscription creation with a service principal?** The full
+> walkthrough — creating the SP, granting it the role with its **object ID**,
+> authenticating, and running it in CI — is in
+> [service-principal-automation-101.md](./service-principal-automation-101.md).
+
 > Keep these identities clearly named (e.g. prefix `ea2mca-`) and time-boxed so they
 > are easy to find and remove after testing. Do not embed their secrets in this repo.
 

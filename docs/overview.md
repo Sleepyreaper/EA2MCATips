@@ -16,6 +16,8 @@ Under MCA, customers should rebuild their operating model from EA enrollment, de
 | [Billing hierarchy and invoice flow](./billing-hierarchy-invoice-flow.md) | MCA hierarchy, charge rollup, and operational billing flow. |
 | [Invoice management](./invoice-management.md) | Invoice structure, timing, portal/API download, and invoice role guidance. |
 | [Testing strategy](./testing-strategy.md) | CSA checklist for offline validation, RBAC tests, API/report tests, and controlled live validation. |
+| [Subscription automation](./subscription-automation.md) | Create MCA subscriptions (Terraform + script), the least-privilege role, and scope discovery. |
+| [Service principal 101](./service-principal-automation-101.md) | Detailed: create an SP, grant the new role, and automate subscription creation by CLI, Terraform, and CI. |
 | [Uncertainty register](./uncertainty-register.md) | Known evidence gaps and recommended conservative stances. |
 | [Sources](./sources.md) | Numbered Microsoft Learn reference list with dashboard link keys. |
 | [What I need from you](./what-i-need-from-you.md) | Customer/environment intake checklist for real test wiring. |

@@ -28,6 +28,10 @@ on the **target invoice section** — not Owner/Contributor at the billing accou
 Billing-scope roles are separate from Azure RBAC; Azure RBAC on a subscription
 does **not** grant billing-scope create rights.
 
+> Automating with a **service principal**? See the detailed
+> [Service Principal 101](./service-principal-automation-101.md) — creating the SP,
+> granting it the role (with its object ID), authenticating, and running it in CI.
+
 Grant it (preview, then apply):
 
 ```bash

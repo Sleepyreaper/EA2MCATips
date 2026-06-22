@@ -18,6 +18,9 @@
 #     --billing-account "<BA>" --billing-profile "<BP>" [--invoice-section "<IS>"] \
 #     --role "Invoice manager" --principal-id "<OBJECT_ID>" [--apply]
 #
+# For a SERVICE PRINCIPAL, --principal-id is the service principal (enterprise
+# application) OBJECT ID, and you may also need --principal-tenant-id <TENANT_GUID>.
+#
 # Common roles: "Billing account owner|contributor|reader",
 #   "Billing profile owner|contributor|reader", "Invoice manager",
 #   "Invoice section owner|contributor|reader", "Azure subscription creator".
@@ -27,16 +30,18 @@ API="${BILLING_API_VERSION:-2024-04-01}"
 APPLY="false"
 INVOICE_SECTION=""
 BILLING_PROFILE=""
+PRINCIPAL_TENANT_ID=""
 
 while [[ $# -gt 0 ]]; do
   case "$1" in
-    --billing-account) BILLING_ACCOUNT="$2"; shift 2;;
-    --billing-profile) BILLING_PROFILE="$2"; shift 2;;
-    --invoice-section) INVOICE_SECTION="$2"; shift 2;;
-    --role)            ROLE_NAME="$2"; shift 2;;
-    --principal-id)    PRINCIPAL_ID="$2"; shift 2;;
-    --apply)           APPLY="true"; shift;;
-    -h|--help)         sed -n '2,26p' "$0"; exit 0;;
+    --billing-account)     BILLING_ACCOUNT="$2"; shift 2;;
+    --billing-profile)     BILLING_PROFILE="$2"; shift 2;;
+    --invoice-section)     INVOICE_SECTION="$2"; shift 2;;
+    --role)                ROLE_NAME="$2"; shift 2;;
+    --principal-id)        PRINCIPAL_ID="$2"; shift 2;;
+    --principal-tenant-id) PRINCIPAL_TENANT_ID="$2"; shift 2;;
+    --apply)               APPLY="true"; shift;;
+    -h|--help)             sed -n '2,29p' "$0"; exit 0;;
     *) echo "Unknown argument: $1" >&2; exit 1;;
   esac
 done
@@ -82,15 +87,13 @@ echo "roleDefinitionId: ${ROLE_DEF_ID}"
 
 ASSIGNMENT_NAME=$(uuidgen 2>/dev/null || python3 -c "import uuid;print(uuid.uuid4())")
 ASSIGN_URL="https://management.azure.com${SCOPE}/billingRoleAssignments/${ASSIGNMENT_NAME}?api-version=${API}"
-BODY=$(cat <<JSON
-{
-  "properties": {
-    "principalId": "${PRINCIPAL_ID}",
-    "roleDefinitionId": "${ROLE_DEF_ID}"
-  }
-}
-JSON
-)
+BODY=$(PRINCIPAL_ID="$PRINCIPAL_ID" ROLE_DEF_ID="$ROLE_DEF_ID" PRINCIPAL_TENANT_ID="$PRINCIPAL_TENANT_ID" python3 -c "
+import os, json
+props = {'principalId': os.environ['PRINCIPAL_ID'], 'roleDefinitionId': os.environ['ROLE_DEF_ID']}
+if os.environ.get('PRINCIPAL_TENANT_ID'):
+    props['principalTenantId'] = os.environ['PRINCIPAL_TENANT_ID']
+print(json.dumps({'properties': props}, indent=2))
+")
 echo "Request body:"; echo "${BODY}"
 
 if [[ "$APPLY" != "true" ]]; then
