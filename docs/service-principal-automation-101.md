@@ -46,6 +46,14 @@ No Azure RBAC, no Entra directory roles, no billing‑account‑wide access.
    (`2018-03-01-preview`) may not be enough on the latest API (`2020-05-01`); a
    billing admin may need to delegate the role to your SP
    ([Learn](https://learn.microsoft.com/en-us/azure/cost-management-billing/manage/programmatically-create-subscription-microsoft-customer-agreement)).
+4. **You can only delegate a role you can administer — and you can't self‑bootstrap
+   it.** Granting the SP the role is a `billingRoleAssignments/write`, which requires
+   **effective owner/manage‑access** at that scope (Invoice section owner, or Billing
+   profile/account owner). Being able to *create* subscriptions (Azure subscription
+   creator) is **not** enough to *delegate*. And a non‑owner can't grant themselves
+   ownership — someone who is already an effective owner must do it. See
+   [§3.0](#30-before-you-grant-confirm-you-can-assign-roles) and the
+   [MCA‑E note](#mca-e-ea-migrated-accounts-portal-vs-api).
 
 ---
 
@@ -54,7 +62,7 @@ No Azure RBAC, no Entra directory roles, no billing‑account‑wide access.
 | To do this... | You need... |
 |---|---|
 | Create the app + SP | Permission to register apps (Application Developer, or have an admin do it) |
-| Grant the billing role | **Billing account owner** or **invoice section owner** (or billing profile owner) on the target scope |
+| **Grant the SP its billing role** | An **effective** owner at the scope: **Invoice section owner** (or Billing profile / Billing account owner) **with manage‑access**. Verify first with `scripts/check_billing_access.sh` — a "Billing account owner" *record* is not always effective (see [MCA‑E note](#mca-e-ea-migrated-accounts-portal-vs-api)). |
 | Run the automation | The SP itself, after the role is granted |
 
 Tools: `az` (logged in), and Terraform ≥ 1.5 for the Terraform path.
@@ -112,6 +120,25 @@ az ad app credential reset --id "$APP_ID" --display-name "terraform" --years 1
 
 ## 3. Grant the new role (least privilege)
 
+### 3.0 Before you grant: confirm YOU can assign roles
+
+The grant only works if **you** are an *effective* owner at the scope. Check first —
+this is read‑only and saves you from a confusing `403` loop:
+
+```bash
+scripts/check_billing_access.sh \
+  --billing-account "<BA>" --billing-profile "<BP>" --invoice-section "<IS>"
+```
+
+- **Q1 (create)** lists the invoice sections you can create subscriptions under.
+- **Q2 (delegate)** is the one that matters here: if you are not an effective owner,
+  the grant below will fail with `AuthorizationFailed` on
+  `billingRoleAssignments/write` — and **retrying or re‑logging in will not fix it**.
+  A billing **owner** must either grant the SP the role, or grant **you** *Invoice
+  section owner* first (see the [MCA‑E note](#mca-e-ea-migrated-accounts-portal-vs-api)).
+
+### 3.1 Grant
+
 Find the invoice section names, then grant **Azure subscription creator** to the
 **SP object ID** on that invoice section only.
 
@@ -140,11 +167,36 @@ PUT https://management.azure.com/providers/Microsoft.Billing/billingAccounts/<BA
 }
 ```
 `a0bcee42-bf30-4d1b-926a-48d21664ef71` is the **Azure subscription creator** billing
-role. The script resolves it by name so you never hardcode the GUID.
+role in many tenants — **but the GUID is not universal** (e.g. on the MCA‑E account we
+tested it was `30000000-aaaa-bbbb-cccc-100000000006`). That's exactly why the script
+resolves the role **by name** against the scope's `billingRoleDefinitions` instead of
+hardcoding a GUID.
 </details>
 
 **Portal alternative:** Cost Management + Billing → select the **invoice section** →
-**Access control (IAM)** → **Add** → role *Azure subscription creator* → pick the app.
+**Access control (IAM)** → **Add** → role *Azure subscription creator*. Note: the
+billing IAM portal reliably supports adding **users/groups**; adding a **service
+principal/app** to a billing role is best done via the CLI/API above. So a common,
+reliable pattern is: in the portal, add **yourself** as *Invoice section owner*, then
+run the CLI grant for the SP.
+
+### MCA-E (EA-migrated) accounts: portal vs API
+
+On **MCA‑E** accounts (an EA migrated to MCA — `accountType=Enterprise`,
+`agreementType=MicrosoftCustomerAgreement`), a **"Billing account owner" record may not
+be effective** for `billingRoleAssignments/write` through the ARM Billing API, even
+though billing admin works in the portal/EA experience. Symptoms we confirmed on a live
+MCA‑E account:
+
+- `listInvoiceSectionsWithCreateSubscriptionPermission` → you **can create** subscriptions.
+- `assign_billing_role.sh ... --apply` → **403** `AuthorizationFailed` on
+  `billingRoleAssignments/write`, on both `2024-04-01` and `2019-10-01-preview`, with a
+  brand‑new token (so it is **not** a stale‑token issue).
+
+**Resolution:** have an **effective** billing owner add the assignment **in the Azure
+portal** (where EA/MCA‑E billing admin rights apply) — either grant the SP the role, or
+grant **you** *Invoice section owner*. Once you hold effective ownership, refresh your
+`az login` and the CLI grant works.
 
 ### Verify the assignment
 
@@ -256,6 +308,7 @@ steps:
 | Symptom | Cause | Fix |
 |---|---|---|
 | `403 AuthorizationFailed` on create | SP lacks the billing role, or you granted it the **wrong** object ID (used `appId` or the app‑registration object ID) | Re‑check `SP_OBJECT_ID` via `az ad sp show --id <appId> --query id`; grant Azure subscription creator on the invoice section |
+| `403 AuthorizationFailed` on **`billingRoleAssignments/write`** when **you** grant the SP | **You** are not an effective owner at that scope (a non‑effective "Billing account owner" record on MCA‑E, or only subscription‑creator). Re‑login does **not** fix it | Run `check_billing_access.sh`; have an effective billing owner grant the SP (portal/API), or grant **you** *Invoice section owner* first. See the [MCA‑E note](#mca-e-ea-migrated-accounts-portal-vs-api) |
 | Role assignment for the SP fails | Missing `principalTenantId` | Re‑run with `--principal-tenant-id "$TENANT_ID"` |
 | Works on old API, fails on latest | Latest‑API permission delegation | Have a billing admin delegate the role for the latest API |
 | `az login` says "no subscriptions" | The SP only has a billing role (expected) | Add `--allow-no-subscriptions` |
@@ -265,6 +318,7 @@ steps:
 
 ## Where this maps in the repo
 
+- **Check your access first:** [`scripts/check_billing_access.sh`](../scripts/check_billing_access.sh)
 - Grant role: [`scripts/assign_billing_role.sh`](../scripts/assign_billing_role.sh)
 - Create (script): [`scripts/create_subscription.sh`](../scripts/create_subscription.sh)
 - Create (Terraform): [`infra/terraform/`](../infra/terraform/README.md)

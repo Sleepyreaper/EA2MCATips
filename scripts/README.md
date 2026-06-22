@@ -6,6 +6,7 @@ parameterized — no billing IDs or secrets are baked in. Authenticate with
 
 | Script | What it does | Mutating? |
 |--------|--------------|-----------|
+| `check_billing_access.sh` | Diagnose whether **you** can create subscriptions and assign billing roles at a scope — run this **before** trying to grant the SP | No (read-only) |
 | `discover_billing_scopes.sh` | List billing accounts → profiles → invoice sections to find the three names you need | No (read-only) |
 | `assign_billing_role.sh` | Grant **any** MCA billing role (resolved by name) to a principal at the smallest scope — for provisioning least-privilege test accounts | Yes — `--dry-run` by default, needs `--apply` |
 | `assign_subscription_creator_role.sh` | Convenience shortcut: grant **Azure subscription creator** on an invoice section | Yes — `--dry-run` by default, needs `--apply` |

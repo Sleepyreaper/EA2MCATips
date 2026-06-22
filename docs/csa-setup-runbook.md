@@ -109,6 +109,15 @@ billing role at the **smallest** scope. Use the general helper
 portal path under **Cost Management + Billing → (scope) → Access control (IAM)**
 ([manage billing access](https://learn.microsoft.com/en-us/azure/cost-management-billing/manage/manage-billing-access)).
 
+> **Prerequisite — confirm you can actually assign roles.** Run
+> `scripts/check_billing_access.sh --billing-account <BA> --billing-profile <BP> --invoice-section <IS>`
+> first. To *assign* billing roles you must be an **effective owner** (Invoice section
+> owner / Billing profile / Billing account owner *with* manage-access). On **MCA‑E**
+> (EA‑migrated) accounts a "Billing account owner" record may **not** be effective via
+> the ARM API — if `--apply` returns `403` on `billingRoleAssignments/write`, add the
+> assignment **in the Azure portal** (where EA/MCA‑E admin rights apply), or have an
+> effective owner grant it. See [service-principal-automation-101 → MCA‑E note](./service-principal-automation-101.md#mca-e-ea-migrated-accounts-portal-vs-api).
+
 | Customer test scenario | Test identity | Least-privilege role | Scope | Why |
 |---|---|---|---|---|
 | View / download invoices | finance-tester | **Invoice manager** | billing profile | Narrowest invoice-focused role ([billing roles](https://learn.microsoft.com/en-us/azure/cost-management-billing/manage/understand-mca-roles)) |
