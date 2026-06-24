@@ -11,7 +11,7 @@
 # Env override: BILLING_ACCOUNT, BILLING_API_VERSION (default 2020-05-01)
 set -euo pipefail
 
-API="${BILLING_API_VERSION:-2020-05-01}"
+API="${BILLING_API_VERSION:-2024-04-01}"
 BASE="https://management.azure.com/providers/Microsoft.Billing"
 ACCOUNT="${BILLING_ACCOUNT:-}"
 
@@ -31,6 +31,25 @@ echo "== Billing accounts =="
 az rest --method get --url "${BASE}/billingAccounts?api-version=${API}" -o json | pp
 
 if [[ -n "$ACCOUNT" ]]; then
+  # If the caller passed a display name rather than an API name, resolve it.
+  # API names contain colons or underscores and never spaces; display names may have spaces.
+  if echo "$ACCOUNT" | grep -q ' '; then
+    RESOLVED=$(az rest --method get --url "${BASE}/billingAccounts?api-version=${API}" -o json \
+      | python3 -c "
+import sys, json
+accounts = json.load(sys.stdin).get('value', [])
+target = sys.argv[1].lower()
+matches = [a['name'] for a in accounts if a.get('properties', {}).get('displayName', '').lower() == target]
+print(matches[0] if matches else '')
+" "$ACCOUNT")
+    if [[ -z "$RESOLVED" ]]; then
+      echo "ERROR: No billing account found with display name '${ACCOUNT}'." >&2
+      echo "       Run this script without --account to list available accounts." >&2
+      exit 1
+    fi
+    echo "(Resolved display name '${ACCOUNT}' → API name '${RESOLVED}')"
+    ACCOUNT="$RESOLVED"
+  fi
   echo
   echo "== Billing profiles in ${ACCOUNT} =="
   az rest --method get --url "${BASE}/billingAccounts/${ACCOUNT}/billingProfiles?api-version=${API}" -o json | pp
@@ -47,4 +66,7 @@ if [[ -n "$ACCOUNT" ]]; then
   done
   echo
   echo "Use these three names as billing_account_name / billing_profile_name / invoice_section_name."
+  echo
+  echo "NOTE: invoice section 'name' values are GUIDs — use the GUID (not the display name)"
+  echo "      in billing scope paths, terraform.tfvars, and API calls."
 fi

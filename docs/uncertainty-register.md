@@ -26,14 +26,26 @@ Current Learn says **Contributor or greater** is needed for MCA billing account/
 
 **Recommended stance:** Validate the connector with the customer’s intended persona. If Contributor is too broad, use Cost Management exports as the reporting data source.
 
-## U5. Terraform support needs careful wording
+## U5. Terraform support needs careful wording — **AzAPI path validated ✅**
 
-Microsoft Learn clearly documents the ARM/AzAPI schema for `Microsoft.Subscription/aliases`, the REST alias creation pattern, and MCA billing-scope discovery. In the pages reviewed, Learn is less explicit about a first-party end-to-end AzureRM example proving the exact current `azurerm_subscription` argument shape for MCA `billing_scope_id`. Do not overclaim AzureRM-native support details without testing provider documentation/version behavior directly. Learn strongly supports the alias/AzAPI path; AzureRM may support it, but that specific statement needs verification in the build phase ([Microsoft Learn](https://learn.microsoft.com/en-us/azure/templates/microsoft.subscription/aliases)).
+Microsoft Learn clearly documents the ARM/AzAPI schema for `Microsoft.Subscription/aliases`, the REST alias creation pattern, and MCA billing-scope discovery. The **AzAPI path is live-validated**: `azapi_resource` targeting `Microsoft.Subscription/aliases@2021-10-01` with a correct `billingScope` reaches `provisioningState: Succeeded` against a real MCA-E billing account. The AzureRM-native path (`azurerm_subscription`) has not been separately tested — prefer the AzAPI-backed approach.
 
-**Recommended stance:** Prefer alias API / AzAPI-backed wording unless the target AzureRM provider version is validated.
+**Validated stance:** Use AzAPI / alias API path. Confirmed working end-to-end (Terraform plan + REST API) against MCA-E account type.
 
 ## U6. Billing REST API versions vary across Learn pages
 
 Some newer Billing REST references use `2024-04-01`, while operational examples still cite `2020-05-01` or `2021-10-01`. This is normal in Learn, but it means the implementation should standardize on the latest supported stable examples documented for each specific operation, not mix-and-match casually ([Microsoft Learn](https://learn.microsoft.com/en-us/rest/api/billing/billing-accounts?view=rest-billing-2024-04-01)).
 
-**Recommended stance:** Choose API versions per operation from the operation’s own Learn page and document the selected version in implementation code/comments.
+**Recommended stance:** Choose API versions per operation from the operation's own Learn page and document the selected version in implementation code/comments. For billing account/profile/invoice section discovery, `2024-04-01` is confirmed working.
+
+## U7. Invoice section display names ≠ API names — **confirmed**
+
+Invoice sections have a friendly **display name** (e.g. "Accenture1") visible in the portal and in `properties.displayName`, and a separate **API name** (a GUID, e.g. `eaed06d4-ac9c-...`) used in all REST paths and Terraform config. Using the display name in a billing scope path produces a `404` or `InvalidBillingAccountName` error. Always retrieve the actual `name` field from the invoice sections API or from `scripts/discover_billing_scopes.sh` output.
+
+**Validated stance:** Confirmed on MCA-E account. Always use the GUID `name` in `invoice_section_name`.
+
+## U8. Subscription cancellation requires Azure RBAC Owner, not billing role — **confirmed**
+
+`POST /subscriptions/{id}/providers/Microsoft.Subscription/cancel` is an **Azure RBAC** operation on the subscription itself, not a billing operation. A principal with only "Azure subscription creator" (a billing role) receives `404`/`AuthorizationFailed` when attempting to cancel. To cancel a test subscription, first grant **Owner** on the subscription (`az role assignment create --role Owner ...`) and then call the cancel endpoint.
+
+**Validated stance:** Confirmed. Build cleanup scripts/runbooks to include an Owner assignment step before attempting subscription cancellation.

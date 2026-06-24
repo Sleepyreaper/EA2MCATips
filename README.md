@@ -80,8 +80,11 @@ completed and validated here. Source research is preserved in the session artifa
 ## Status
 
 - ✅ Docs, dashboard, Terraform, and scripts are complete and validated offline.
-- ⏳ Pending: real test-environment wiring — provide the values in
-  [`docs/what-i-need-from-you.md`](docs/what-i-need-from-you.md).
+- ✅ **Live-validated (2026-06-23):** SP creation (portal), billing role assignment, REST
+  API subscription creation (`Succeeded` in ~5s), Terraform plan, and cleanup — all
+  confirmed against a real MCA-E billing account. See [`docs/validation-log.md`](docs/validation-log.md).
+- ⏳ `terraform apply` path is ready — supply `terraform.tfvars` values to run it
+  (see [`docs/what-i-need-from-you.md`](docs/what-i-need-from-you.md)).
 - ⚠️ Items marked `pending_validation` (e.g. exact invoice-download role, Power BI
   connector permission) should be confirmed in your tenant — see
   [`docs/uncertainty-register.md`](docs/uncertainty-register.md).

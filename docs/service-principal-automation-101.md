@@ -29,7 +29,7 @@ No Azure RBAC, no Entra directory roles, no billing‑account‑wide access.
 
 ---
 
-## 0. Three things people get wrong (read first)
+## 0. Four things people get wrong (read first)
 
 1. **App registration ≠ service principal, and they have different object IDs.**
    - The **app registration** has an `appId` (client ID) *and* its own object ID.
@@ -54,6 +54,17 @@ No Azure RBAC, no Entra directory roles, no billing‑account‑wide access.
    ownership — someone who is already an effective owner must do it. See
    [§3.0](#30-before-you-grant-confirm-you-can-assign-roles) and the
    [MCA‑E note](#mca-e-ea-migrated-accounts-portal-vs-api).
+5. **Invoice section *display names* ≠ API names.** In the portal you see friendly
+   names like "Accenture1" but the API (and Terraform `invoice_section_name`) requires
+   the **GUID** (e.g. `eaed06d4-...`). Always use `scripts/discover_billing_scopes.sh`
+   or the invoice sections list API to get the real name before wiring it into config.
+   Using the display name will produce a `404` or `InvalidBillingAccountName` error.
+6. **Cancelling a test subscription requires Azure RBAC Owner — not just a billing
+   role.** The `POST .../providers/Microsoft.Subscription/cancel` API call is an
+   Azure RBAC operation on the subscription, not a billing operation. If the SP (or
+   your user) only holds "Azure subscription creator" (a billing role), the cancel will
+   return `404` or `AuthorizationFailed`. Assign **Owner** on the subscription first:
+   `az role assignment create --role Owner --assignee-object-id <OID> --scope /subscriptions/<id>`
 
 ---
 
@@ -71,7 +82,17 @@ Tools: `az` (logged in), and Terraform ≥ 1.5 for the Terraform path.
 
 ## 2. Create the service principal
 
-### 2a. App registration + service principal
+### 2a. Portal path (recommended for first-time setup)
+
+1. Go to **portal.azure.com** → switch to the correct tenant (top-right corner)
+2. Search **"App registrations"** → **+ New registration**
+   - Name: `ea2mca-sub-automation` · Supported account types: Single tenant → **Register**
+3. On the app page, copy: **Application (client) ID** and **Directory (tenant) ID**
+4. Left menu → **Certificates & secrets** → **+ New client secret** → Add → **copy the Value immediately**
+5. Now get the **SP object ID** (this is what the billing role needs — not the app ID):
+   - Search **"Enterprise applications"** → find `ea2mca-sub-automation` → copy **Object ID**
+
+### 2b. CLI path
 
 ```bash
 APP_NAME="ea2mca-sub-automation"
